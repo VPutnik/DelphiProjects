@@ -1,4 +1,4 @@
-object Form1: TForm1
+﻿object Form1: TForm1
   Left = 0
   Top = 0
   Align = alLeft
@@ -29,7 +29,7 @@ object Form1: TForm1
     Top = 195
     Width = 101
     Height = 21
-    Caption = 'Nacin placanja'
+    Caption = 'Nacin pla'#263'anja'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -51,7 +51,7 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label4: TLabel
-    Left = 1095
+    Left = 1088
     Top = 195
     Width = 21
     Height = 21
@@ -66,9 +66,9 @@ object Form1: TForm1
   object Label5: TLabel
     Left = 1494
     Top = 195
-    Width = 92
+    Width = 61
     Height = 21
-    Caption = 'Iznos veci od:'
+    Caption = 'Iznos od:'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -13062,44 +13062,57 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
-  object Button3: TButton
+  object Label6: TLabel
+    Left = 1648
+    Top = 195
+    Width = 21
+    Height = 21
+    Caption = 'do:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Dodaj: TButton
     Left = 284
     Top = 586
     Width = 125
     Height = 40
     Caption = 'Dodaj'
     TabOrder = 17
-    OnClick = Button3Click
+    OnClick = DodajClick
   end
-  object DBGrid1: TDBGrid
+  object Grid_Racuni: TDBGrid
     Left = 783
     Top = 236
     Width = 1111
     Height = 390
-    DataSource = DataSource1
+    DataSource = DS_Racuni
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -12
     TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
-    OnCellClick = DBGrid1CellClick
+    OnCellClick = Grid_RacuniCellClick
   end
-  object DBGrid2: TDBGrid
+  object Grid_Artikli: TDBGrid
     Left = 0
     Top = 236
     Width = 777
     Height = 244
-    DataSource = DataSource2
+    DataSource = DS_Artilki
     TabOrder = 1
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -12
     TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
-    OnCellClick = DBGrid2CellClick
+    OnCellClick = Grid_ArtikliCellClick
   end
-  object ComboBox1: TComboBox
+  object inNacinPlacanja2: TComboBox
     Left = 1343
     Top = 195
     Width = 145
@@ -13110,17 +13123,17 @@ object Form1: TForm1
       'Kartica'
       'Virman')
   end
-  object Button2: TButton
+  object Pretraži: TButton
     Left = 1769
     Top = 190
     Width = 125
     Height = 40
-    Caption = 'Pretrazi'
+    Caption = 'Pretra'#382'i'
     TabOrder = 3
-    OnClick = Button2Click
+    OnClick = PretražiClick
   end
-  object DateTimePicker1: TDateTimePicker
-    Left = 994
+  object inDatumOd: TDateTimePicker
+    Left = 980
     Top = 195
     Width = 95
     Height = 23
@@ -13128,7 +13141,7 @@ object Form1: TForm1
     Time = 0.708981481482624100
     TabOrder = 4
   end
-  object DateTimePicker2: TDateTimePicker
+  object inDatumDo: TDateTimePicker
     Left = 1122
     Top = 195
     Width = 108
@@ -13137,11 +13150,12 @@ object Form1: TForm1
     Time = 0.766027581019443500
     TabOrder = 5
   end
-  object Edit2: TEdit
-    Left = 1592
+  object inIznosOd: TEdit
+    Left = 1561
     Top = 195
-    Width = 161
+    Width = 80
     Height = 23
+    NumbersOnly = True
     TabOrder = 6
   end
   object StaticText1: TStaticText
@@ -13149,7 +13163,7 @@ object Form1: TForm1
     Top = 35
     Width = 471
     Height = 50
-    Caption = 'Salon namestaja RAD studio'
+    Caption = 'Salon name'#353'taja RAD studio'
     Font.Charset = ANSI_CHARSET
     Font.Color = clMaroon
     Font.Height = -37
@@ -13158,12 +13172,12 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 7
   end
-  object DBGrid3: TDBGrid
+  object Grid_StavkeRacuna: TDBGrid
     Left = 783
     Top = 632
     Width = 1111
     Height = 361
-    DataSource = DataSource3
+    DataSource = DS_StavkeRacuna
     TabOrder = 8
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -13190,7 +13204,7 @@ object Form1: TForm1
     Top = 514
     Width = 61
     Height = 25
-    Caption = 'Kolicina:'
+    Caption = 'Koli'#269'ina:'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -13199,7 +13213,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 10
   end
-  object SpinEdit1: TSpinEdit
+  object inKolicina: TSpinEdit
     Left = 157
     Top = 515
     Width = 121
@@ -13208,9 +13222,9 @@ object Form1: TForm1
     MinValue = 0
     TabOrder = 11
     Value = 0
-    OnChange = SpinEdit1Change
+    OnChange = inKolicinaChange
   end
-  object Edit1: TEdit
+  object inIznos: TEdit
     Left = 157
     Top = 545
     Width = 121
@@ -13245,7 +13259,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 14
   end
-  object ComboBox2: TComboBox
+  object inNacinPlacanja1: TComboBox
     Left = 119
     Top = 195
     Width = 121
@@ -13256,14 +13270,14 @@ object Form1: TForm1
       'Kartica'
       'Virman')
   end
-  object Edit4: TEdit
+  object inKupac: TEdit
     Left = 308
     Top = 195
     Width = 166
     Height = 23
     TabOrder = 16
   end
-  object Edit3: TEdit
+  object inIznosSaPopustom: TEdit
     Left = 157
     Top = 574
     Width = 121
@@ -13298,7 +13312,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 20
   end
-  object Edit5: TEdit
+  object inUkupno: TEdit
     Left = 157
     Top = 603
     Width = 121
@@ -13310,7 +13324,7 @@ object Form1: TForm1
     Top = 143
     Width = 195
     Height = 41
-    Caption = 'Kreiranje racuna'
+    Caption = 'Kreiranje ra'#269'una'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -27
@@ -13319,12 +13333,12 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 22
   end
-  object DBGrid4: TDBGrid
+  object Grid_KreiraniRacun: TDBGrid
     Left = 0
     Top = 632
     Width = 777
     Height = 361
-    DataSource = DataSource4
+    DataSource = DS_KreiranRacun
     TabOrder = 23
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -13335,9 +13349,9 @@ object Form1: TForm1
   object StaticText4: TStaticText
     Left = 8
     Top = 541
-    Width = 34
+    Width = 43
     Height = 25
-    Caption = 'Izos:'
+    Caption = 'Iznos:'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -13346,30 +13360,30 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 24
   end
-  object Button1: TButton
+  object Zavrsi: TButton
     Left = 639
     Top = 538
     Width = 125
     Height = 41
-    Caption = 'Zavrsi'
+    Caption = 'Zavr'#353'i'
     TabOrder = 25
-    OnClick = Button1Click
+    OnClick = ZavrsiClick
   end
-  object Button4: TButton
+  object Ponisti: TButton
     Left = 639
     Top = 585
     Width = 125
     Height = 41
-    Caption = 'Ponisti'
+    Caption = 'Poni'#353'ti'
     TabOrder = 26
-    OnClick = Button4Click
+    OnClick = PonistiClick
   end
   object StaticText10: TStaticText
     Left = 798
     Top = 143
     Width = 181
     Height = 41
-    Caption = 'Pregled racuna'
+    Caption = 'Pregled ra'#269'una'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -27
@@ -13378,47 +13392,51 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 27
   end
-  object CheckBox1: TCheckBox
+  object cbDatum: TCheckBox
     Left = 798
     Top = 195
     Width = 19
     Height = 25
     TabOrder = 28
-    OnClick = CheckBox1Click
+    OnClick = cbDatumClick
+  end
+  object inIznosDo: TEdit
+    Left = 1675
+    Top = 195
+    Width = 90
+    Height = 23
+    NumbersOnly = True
+    TabOrder = 29
+  end
+  object Osvezi: TButton
+    Left = 689
+    Top = 200
+    Width = 75
+    Height = 25
+    BiDiMode = bdLeftToRight
+    Caption = 'Osve'#382'i'
+    ParentBiDiMode = False
+    TabOrder = 30
+    OnClick = OsveziClick
   end
   object ADOConnection1: TADOConnection
     Connected = True
     ConnectionString = 
       'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security In' +
-      'fo=False;Initial Catalog=Historian1;Data Source=DESKTOP-8LHI39S\' +
+      'fo=False;Initial Catalog=Historian1;Data Source=DESKTOP-9LHI39S\' +
       'WINCC;Use Procedure for Prepare=1;Auto Translate=True;Packet Siz' +
-      'e=4096;Workstation ID=DESKTOP-8LHI39S;Use Encryption for Data=Fa' +
-      'lse;Tag with column collation when possible=False'
+      'e=4096;Workstation ID=DESKTOP-9LHI39S;Use Encryption for Data=Fa' +
+      'lse;Tag with column collation when possible=False;'
     LoginPrompt = False
     Provider = 'SQLOLEDB.1'
     Left = 1264
     Top = 32
   end
-  object Q_Racuni_SelectAll: TADOQuery
-    Connection = ADOConnection1
-    CursorType = ctStatic
-    AfterOpen = Q_Racuni_SelectAllAfterOpen
-    AfterScroll = Q_Racuni_SelectAllAfterScroll
-    CommandTimeout = 0
-    Parameters = <>
-    Left = 1376
-    Top = 24
-  end
-  object DataSource1: TDataSource
-    DataSet = Q_Racuni_SelectAll
-    Left = 1584
-    Top = 24
-  end
-  object Q_Artikli_SelectAll: TADOQuery
+  object Q_SviArtikli: TADOQuery
     Active = True
     Connection = ADOConnection1
     CursorType = ctStatic
-    AfterOpen = Q_Artikli_SelectAllAfterOpen
+    AfterOpen = Q_SviArtikliAfterOpen
     Parameters = <>
     SQL.Strings = (
       
@@ -13429,13 +13447,13 @@ object Form1: TForm1
       
         'left join [dbo].[Dobavljaci] on Artikli.Dobavljac =  Dobavljaci.' +
         'DobavljacId')
-    Left = 1488
-    Top = 64
+    Left = 632
+    Top = 112
   end
-  object DataSource2: TDataSource
-    DataSet = Q_Artikli_SelectAll
-    Left = 1696
-    Top = 40
+  object DS_Artilki: TDataSource
+    DataSet = Q_SviArtikli
+    Left = 584
+    Top = 152
   end
   object Q_StavkeRacuna: TADOQuery
     Connection = ADOConnection1
@@ -13488,24 +13506,107 @@ object Form1: TForm1
     Left = 1368
     Top = 72
   end
-  object DataSource3: TDataSource
+  object DS_StavkeRacuna: TDataSource
     DataSet = Q_StavkeRacuna
     Left = 1776
     Top = 24
   end
-  object Q_NoviRacun: TADOQuery
+  object Q_KreirajNoviRacun: TADOQuery
     Connection = ADOConnection1
-    Parameters = <>
+    Parameters = <
+      item
+        Name = 'Kupac'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 100
+        Value = Null
+      end
+      item
+        Name = 'NacinPlacanja'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        NumericScale = 255
+        Precision = 255
+        Size = 20
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'INSERT INTO [dbo].[Racuni] ([DatumIzdavanja],[Kupac],[NacinPlaca' +
+        'nja],[Status])'
+      'VALUES (getdate(),:Kupac, :NacinPlacanja ,1);')
     Left = 432
     Top = 114
   end
-  object Q_Stavke_Add: TADOQuery
+  object Q_DodajStavku: TADOQuery
     Connection = ADOConnection1
-    Parameters = <>
+    Parameters = <
+      item
+        Name = 'RacunID'
+        Attributes = [paSigned]
+        DataType = ftLargeint
+        Precision = 19
+        Size = 8
+        Value = Null
+      end
+      item
+        Name = 'ArtikalID'
+        Attributes = [paSigned]
+        DataType = ftLargeint
+        Precision = 19
+        Size = 8
+        Value = Null
+      end
+      item
+        Name = 'Kolicina'
+        Attributes = [paSigned]
+        DataType = ftBCD
+        NumericScale = 2
+        Precision = 10
+        Size = 19
+        Value = Null
+      end
+      item
+        Name = 'JedinicnaCena'
+        Attributes = [paSigned]
+        DataType = ftBCD
+        NumericScale = 2
+        Precision = 18
+        Size = 19
+        Value = Null
+      end
+      item
+        Name = 'PopustProcenat'
+        Attributes = [paSigned, paNullable]
+        DataType = ftBCD
+        NumericScale = 2
+        Precision = 5
+        Size = 19
+        Value = Null
+      end
+      item
+        Name = 'Ukupno'
+        Attributes = [paSigned, paNullable]
+        DataType = ftBCD
+        NumericScale = 2
+        Precision = 18
+        Size = 19
+        Value = Null
+      end>
+    SQL.Strings = (
+      ' INSERT INTO [dbo].[StavkeRacuna] '
+      
+        ' (RacunID, ArtikalID, Kolicina, JedinicnaCena, PopustProcenat, U' +
+        'kupno) '
+      
+        'VALUES (:RacunID, :ArtikalID, :Kolicina, :JedinicnaCena, :Popust' +
+        'Procenat, :Ukupno);')
     Left = 516
     Top = 114
   end
-  object DataSource4: TDataSource
+  object DS_KreiranRacun: TDataSource
     DataSet = Q_KreiraneStavke
     Left = 398
     Top = 519
@@ -13513,8 +13614,134 @@ object Form1: TForm1
   object Q_KreiraneStavke: TADOQuery
     Connection = ADOConnection1
     AfterOpen = Q_KreiraneStavkeAfterOpen
-    Parameters = <>
+    Parameters = <
+      item
+        Name = 'RacunID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'DECLARE @RacunID INT = :RacunID;  '
+      
+        'SELECT Artikli.Naziv, Kolicina, JedinicnaCena, PopustProcenat, U' +
+        'kupno '
+      'FROM [Historian1].[dbo].[StavkeRacuna] '
+      'LEFT JOIN Artikli ON StavkeRacuna.ArtikalID = Artikli.ArtikalID '
+      'WHERE RacunID = @RacunID'
+      'UNION ALL'
+      'SELECT '#39'UKUPNO:'#39', NULL, NULL, NULL, SUM(Ukupno)'
+      'FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunId = @RacunID '
+      'UNION ALL '
+      'SELECT '#39'PDV:'#39', NULL, NULL, NULL, SUM(Ukupno) * 0.2'
+      'FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunId = @RacunID'
+      'UNION ALL'
+      'SELECT '#39'UKUPNO SA PDV:'#39', NULL, NULL, NULL, SUM(Ukupno) * 1.2'
+      'FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunId = @RacunID;')
     Left = 494
     Top = 503
+  end
+  object Q_ZavrsiKreiranjeRacuna: TADOQuery
+    Connection = ADOConnection1
+    Parameters = <
+      item
+        Name = 'IDparam'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'declare @RacunID int = :IDparam;'
+      
+        'declare @Ukupno decimal  = (SELECT SUM(Ukupno) FROM [Historian1]' +
+        '.[dbo].[StavkeRacuna] WHERE RacunID = @RacunID); '
+      
+        'UPDATE [dbo].[Racuni] SET [DatumPrometa] = GETDATE() ,[Ukupno] =' +
+        ' @Ukupno,[Porez] = @Ukupno*0.2'
+      
+        ',[UkupnoSaPorezom] = @Ukupno*1.2 ,[Status] = 2 WHERE RacunID = @' +
+        'RacunID ')
+    Left = 304
+    Top = 96
+  end
+  object Q_ObrisiKreiranRacun: TADOQuery
+    Connection = ADOConnection1
+    Parameters = <
+      item
+        Name = 'RacunID'
+        Attributes = [paSigned]
+        DataType = ftLargeint
+        Precision = 19
+        Size = 8
+        Value = Null
+      end>
+    SQL.Strings = (
+      'DELETE FROM [dbo].[Racuni] WHERE RacunId = :RacunID')
+    Left = 392
+    Top = 24
+  end
+  object Q_PronadjiKreiranRacun: TADOQuery
+    Connection = ADOConnection1
+    Parameters = <>
+    SQL.Strings = (
+      'Select RacunID from Racuni where Status = 1')
+    Left = 600
+    Top = 48
+  end
+  object SP_PretragaRacuna: TADOStoredProc
+    Connection = ADOConnection1
+    AfterOpen = SP_PretragaRacunaAfterOpen
+    AfterScroll = SP_PretragaRacunaAfterScroll
+    ProcedureName = 'pretragaRacuna'
+    Parameters = <
+      item
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        Direction = pdReturnValue
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@NacinP'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 20
+        Value = Null
+      end
+      item
+        Name = '@DatumOd'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 10
+        Value = Null
+      end
+      item
+        Name = '@DatumDo'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 10
+        Value = Null
+      end
+      item
+        Name = '@IznosOd'
+        Attributes = [paNullable]
+        DataType = ftBCD
+        NumericScale = 2
+        Precision = 18
+        Value = Null
+      end
+      item
+        Name = '@IznosDo'
+        Attributes = [paNullable]
+        DataType = ftBCD
+        NumericScale = 2
+        Precision = 18
+        Value = Null
+      end>
+    Left = 1008
+    Top = 40
+  end
+  object DS_Racuni: TDataSource
+    DataSet = SP_PretragaRacuna
+    Left = 1120
+    Top = 24
   end
 end

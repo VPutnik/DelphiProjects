@@ -10,76 +10,82 @@ uses
 type
   TForm1 = class(TForm)
     ADOConnection1: TADOConnection;
-    Q_Racuni_SelectAll: TADOQuery;
+    Q_SviArtikli: TADOQuery;
+    Q_KreirajNoviRacun: TADOQuery;
+    Q_DodajStavku: TADOQuery;
+    DS_KreiranRacun: TDataSource;
+    Q_KreiraneStavke: TADOQuery;
+    Grid_Artikli: TDBGrid;
+    Grid_KreiraniRacun: TDBGrid;
+    inNacinPlacanja1: TComboBox;
+    inKupac: TEdit;
+    inKolicina: TSpinEdit;
+    inIznos: TEdit;
+    inIznosSaPopustom: TEdit;
+    inUkupno: TEdit;
+    Dodaj: TButton;
+    Zavrsi: TButton;
+    Ponisti: TButton;
     Q_StavkeRacuna: TADOQuery;
-    Q_Artikli_SelectAll: TADOQuery;
-    DataSource1: TDataSource;
-    DBGrid1: TDBGrid;
-    DBGrid2: TDBGrid;
+    Grid_Racuni: TDBGrid;
+    Grid_StavkeRacuna: TDBGrid;
+    inNacinPlacanja2: TComboBox;
+    cbDatum: TCheckBox;
+    inDatumOd: TDateTimePicker;
+    inDatumDo: TDateTimePicker;
+    inIznosOd: TEdit;
+    inIznosDo: TEdit;
+    Pretraži: TButton;
+
     Label1: TLabel;
-    ComboBox1: TComboBox;
-    Button2: TButton;
     Label2: TLabel;
-    DateTimePicker1: TDateTimePicker;
     Label3: TLabel;
-    DateTimePicker2: TDateTimePicker;
     Label4: TLabel;
     Label5: TLabel;
-    Edit2: TEdit;
+    Label6: TLabel;
     Label7: TLabel;
-    Image1: TImage;
-    Shape1: TShape;
-    StaticText1: TStaticText;
-    DBGrid3: TDBGrid;
     Label9: TLabel;
+
+    StaticText1: TStaticText;
     StaticText2: TStaticText;
     StaticText3: TStaticText;
-    SpinEdit1: TSpinEdit;
-    Edit1: TEdit;
-    StaticText7: TStaticText;
-    StaticText8: TStaticText;
-    ComboBox2: TComboBox;
-    Edit4: TEdit;
-    Button3: TButton;
-    Edit3: TEdit;
+    StaticText4: TStaticText;
     StaticText5: TStaticText;
     StaticText6: TStaticText;
-    Edit5: TEdit;
-    Shape2: TShape;
+    StaticText7: TStaticText;
+    StaticText8: TStaticText;
     StaticText9: TStaticText;
-    Shape3: TShape;
-    Q_NoviRacun: TADOQuery;
-    Q_Stavke_Add: TADOQuery;
-    DataSource4: TDataSource;
-    DBGrid4: TDBGrid;
-    Q_KreiraneStavke: TADOQuery;
-    StaticText4: TStaticText;
-    Button1: TButton;
-    Button4: TButton;
-    Shape4: TShape;
     StaticText10: TStaticText;
+
+    Shape1: TShape;
+    Shape2: TShape;
+    Shape3: TShape;
+    Shape4: TShape;
     Shape5: TShape;
-    CheckBox1: TCheckBox;
 
-
-
+    Image1: TImage;
+    Osvezi: TButton;
+    Q_ZavrsiKreiranjeRacuna: TADOQuery;
+    Q_ObrisiKreiranRacun: TADOQuery;
+    Q_PronadjiKreiranRacun: TADOQuery;
+    SP_PretragaRacuna: TADOStoredProc;
+    DS_Racuni: TDataSource;
 
     procedure FormCreate(Sender: TObject);
-
-    procedure Button2Click(Sender: TObject);
-    procedure CheckBox1Click(Sender: TObject);
-    procedure Q_Racuni_SelectAllAfterOpen(DataSet: TDataSet);
-    procedure DBGrid1CellClick(Column: TColumn);
+    procedure PretražiClick(Sender: TObject);
+    procedure cbDatumClick(Sender: TObject);
+    procedure Grid_RacuniCellClick(Column: TColumn);
     procedure Q_StavkeRacunaAfterOpen(DataSet: TDataSet);
-    procedure Q_Racuni_SelectAllAfterScroll(DataSet: TDataSet);
-    procedure DBGrid2CellClick(Column: TColumn);
-    procedure Q_Artikli_SelectAllAfterOpen(DataSet: TDataSet);
-    procedure SpinEdit1Change(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure Grid_ArtikliCellClick(Column: TColumn);
+    procedure Q_SviArtikliAfterOpen(DataSet: TDataSet);
+    procedure inKolicinaChange(Sender: TObject);
+    procedure DodajClick(Sender: TObject);
+    procedure ZavrsiClick(Sender: TObject);
     procedure Q_KreiraneStavkeAfterOpen(DataSet: TDataSet);
-    procedure Button4Click(Sender: TObject);
-
+    procedure PonistiClick(Sender: TObject);
+    procedure OsveziClick(Sender: TObject);
+    procedure SP_PretragaRacunaAfterOpen(DataSet: TDataSet);
+    procedure SP_PretragaRacunaAfterScroll(DataSet: TDataSet);
   private
   var
     pArtikalID: integer;
@@ -94,8 +100,8 @@ type
   procedure PrikaziStavkeZaRacun(RacunID: Integer);
   procedure IzracunajStavkeZaRacun;
   procedure OsveziKorpu;
-
-
+  procedure ResetPrvtVar;
+  function KreirajNoviRacun(kupac: string;nacinPlacanja: string):Int64;
 
   public
     { Public declarations }
@@ -107,240 +113,9 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TForm1.PrikaziStavkeZaRacun(RacunID: Integer);
+procedure TForm1.ResetPrvtVar;
 begin
-  Q_StavkeRacuna.Close;
-  Q_StavkeRacuna.Parameters.ParamByName('RacunID').Value := RacunID;
-  Q_StavkeRacuna.Open;
-end;
-
-procedure TForm1.Button1Click(Sender: TObject);
-//button ZAVRSI
-begin
-  var sqlString : string;
-  if pRacunID <> 0 then
-   begin
-   Q_NoviRacun.close;
-    sqlString :='declare @RacunID int = :IDparam;'+
-             'declare @Ukupno decimal  = (SELECT SUM(Ukupno) FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunID = @RacunID); ' +
-             'UPDATE [dbo].[Racuni] SET [DatumPrometa] = GETDATE() ,[Ukupno] = @Ukupno,[Porez] = @Ukupno*0.2' +
-             ',[UkupnoSaPorezom] = @Ukupno*1.2 ,[Status] = 2 WHERE RacunID = @RacunID ';
-
-   Q_NoviRacun.SQL.Text := sqlString;
-   Q_NoviRacun.Parameters.ParamByName('IDparam').Value := pRacunID;
-   Q_NoviRacun.ExecSQL;
-   Q_NoviRacun.Close;
-   end
-   else
-   begin
    pRacunID := 0;
-   pArtikalID := 0;
-    pNazivArtikla := '';
-    pKolicina := 0;
-    pIznos := 0;
-    pPopust := 0;
-    pIznosSaPopustom := 0;
-    pUkupno:= 0;
-    pRacunID :=0;
-   end;
-end;
-
-procedure TForm1.Button2Click(Sender: TObject);
-var sqlString : string;
-sqlSubString : string;
-paramCount : Integer;
-iznos: Double;
-begin
-  Q_Racuni_SelectAll.Close;
-  Q_Racuni_SelectAll.SQL.Clear;
- paramCount := 0;
-  sqlString := 'SELECT  RacunID,BrojRacuna,DatumIzdavanja,DatumPrometa,Kupac,NacinPlacanja,Ukupno,Porez,UkupnoSaPorezom,Statusi.Oznaka as Status,Napomena FROM [Historian1].[dbo].[Racuni] left join Statusi on Racuni.Status = Statusi.StatusID ';
-
-  if ComboBox1.ItemIndex <> -1  then
-    begin
-      sqlString := sqlString + ' WHERE NacinPlacanja = :NacinPlacanja';
-      paramCount := paramCount + 1;
-    end;
-
-    if CheckBox1.Checked then
-     begin
-   if DateTimePicker1.Date <> 0 then
-   begin
-    if paramCount = 0  then
-      sqlSubString := ' Where '
-    else
-      sqlSubString := ' And ';
-
-   sqlString := sqlString + sqlSubString    + 'DatumIzdavanja > :DatumOd';
-   paramCount := paramCount + 1;
-   end;
-
-   if DateTimePicker2.Date <> 0 then
-   begin
-    if paramCount = 0  then
-      sqlSubString := ' Where '
-    else
-      sqlSubString := ' And ';
-
-   paramCount := paramCount + 1;
-   sqlString := sqlString + sqlSubString    + 'DatumIzdavanja < :DatumDo';
-   end;
-   end;
-   if Edit2.Text <> '' then
-    begin
-      try
-    iznos := StrToFloat(Edit2.Text);
-  except
-    on E: Exception do
-    begin
-      ShowMessage('Niste uneli ispravan broj');
-      Edit2.SetFocus;
-      Exit;
-    end;
-  end;
-    if paramCount = 0  then
-      sqlSubString := ' Where '
-    else
-      sqlSubString := ' And ';
-
-   paramCount := paramCount + 1;
-   sqlString := sqlString + sqlSubString    + 'UkupnoSaPorezom > :Iznos';
-   end;
-   ////////////////////  zavrsena provera parametara i sql query formiran /////////////////////////////////////
-
-   Q_Racuni_SelectAll.SQL.Add(sqlString);
-
-     if ComboBox1.ItemIndex <> -1  then
-      Q_Racuni_SelectAll.Parameters.ParamByName('NacinPlacanja').Value  := ComboBox1.Items[ComboBox1.ItemIndex];
-       if CheckBox1.Checked then
-       begin
-     if DateTimePicker1.Date <> 0 then
-      Q_Racuni_SelectAll.Parameters.ParamByName('DatumOd').Value  := DateTimePicker1.Date;
-     if DateTimePicker2.Date <> 0 then
-      Q_Racuni_SelectAll.Parameters.ParamByName('DatumDo').Value  := DateTimePicker2.Date;
-       end;
-     if Edit2.Text <> '' then
-      Q_Racuni_SelectAll.Parameters.ParamByName('Iznos').Value  := iznos;
-
-    Q_Racuni_SelectAll.Open;
-
-end;
-
-procedure TForm1.OsveziKorpu;
-begin
-var sqlString: string;
-Q_KreiraneStavke.close;
-sqlString := 'DECLARE @RacunID INT = :RacunID; ' +
-  ' ' +
-  'SELECT Artikli.Naziv, Kolicina, JedinicnaCena, PopustProcenat, Ukupno ' +
-  'FROM [Historian1].[dbo].[StavkeRacuna] ' +
-  'LEFT JOIN Artikli ON StavkeRacuna.ArtikalID = Artikli.ArtikalID ' +
-  'WHERE RacunID = @RacunID ' +
-  'UNION ALL ' +
-  'SELECT ''UKUPNO:'', NULL, NULL, NULL, SUM(Ukupno) ' +
-  'FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunId = @RacunID ' +
-  'UNION ALL ' +
-  'SELECT ''PDV:'', NULL, NULL, NULL, SUM(Ukupno) * 0.2 ' +
-  'FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunId = @RacunID ' +
-  'UNION ALL ' +
-  'SELECT ''UKUPNO SA PDV:'', NULL, NULL, NULL, SUM(Ukupno) * 1.2 ' +
-  'FROM [Historian1].[dbo].[StavkeRacuna] WHERE RacunId = @RacunID;';
-
-  Q_KreiraneStavke.sql.Text := sqlString;
-  Q_KreiraneStavke.Parameters.ParamByName('RacunID').Value := pRacunID;
-  Q_KreiraneStavke.Open;
-end;
-
-procedure TForm1.Button3Click(Sender: TObject);
-//DODAJ button
-begin
- var sqlString: string;
- var kupac: string;
- var nacinPlacanja: string;
- kupac := Edit4.Text;
- if ComboBox2.ItemIndex <> -1 then
- nacinPlacanja := ComboBox2.Items[ComboBox2.ItemIndex];
-
- if pKolicina <> 0 then
-  begin
- sqlString := 'Select * from Racuni where Status = 1'; //status kreiran
- Q_NoviRacun.Close;
- Q_NoviRacun.SQL.Text := sqlString;
- Q_NoviRacun.Open;
- if Q_NoviRacun.IsEmpty then
-   begin
-    Q_NoviRacun.Close;
-    sqlString := 'INSERT INTO [dbo].[Racuni] ([DatumIzdavanja],[Kupac],[NacinPlacanja],[Status])'
-     + 'VALUES (getdate(),:Kupac, :NacinPlacanja ,1)';
-     Q_NoviRacun.SQL.Text := sqlString;
-     Q_NoviRacun.Parameters.ParamByName('Kupac').Value := kupac;
-     Q_NoviRacun.Parameters.ParamByName('NacinPlacanja').Value := nacinPlacanja;
-     Q_NoviRacun.ExecSQL;
-   end;
-
-   // get pRacunID
-   sqlString := 'Select RacunID from Racuni where Status = 1'; //status kreiran
-   Q_NoviRacun.SQL.Text := sqlString;
-   Q_NoviRacun.Open;
-   if not Q_NoviRacun.IsEmpty then
-   begin
-    pRacunID := Q_NoviRacun.FieldByName('RacunID').AsInteger;
-     Q_NoviRacun.Close;
-   end
-  else
-  begin
-    pRacunID := 0;
-     Q_NoviRacun.Close;
-    ShowMessage('Neuspelo kreiranje racuna');
-    Exit;
-  end;
-     Q_Stavke_Add.SQL.Text := 'INSERT INTO [dbo].[StavkeRacuna] ' +
-                       '(RacunID, ArtikalID, Kolicina, JedinicnaCena, PopustProcenat, Ukupno) ' +
-                       'VALUES (:RacunID, :ArtikalID, :Kolicina, :JedinicnaCena, :PopustProcenat, :Ukupno)';
-
-  Q_Stavke_Add.Parameters.ParamByName('RacunID').Value := pRacunID;
-  Q_Stavke_Add.Parameters.ParamByName('ArtikalID').Value := pArtikalID;
-  Q_Stavke_Add.Parameters.ParamByName('Kolicina').Value := pKolicina;
-  Q_Stavke_Add.Parameters.ParamByName('JedinicnaCena').Value := pIznos;
-  Q_Stavke_Add.Parameters.ParamByName('PopustProcenat').Value := pPopust;
-  Q_Stavke_Add.Parameters.ParamByName('Ukupno').Value := pUkupno;
-
-
-  Q_Stavke_Add.ExecSQL;
-  ShowMessage('Stavka je uspešno dodata!');
-  OsveziKorpu;
-  end
-  else
-  ShowMessage('Kolicina ne moze biti nula');
-  end;
-
-procedure TForm1.Button4Click(Sender: TObject);
-//PONISTI button
-var sqlString : string;
-begin
-   if pRacunID <> 0 then
-   begin
-   Q_KreiraneStavke.close;
-   sqlString := 'DELETE FROM [dbo].[StavkeRacuna] WHERE RacunId = :RacunID';
-   Q_KreiraneStavke.SQL.Text := sqlString;
-   Q_KreiraneStavke.Parameters.ParamByName('RacunID').Value := pRacunID;
-   Q_KreiraneStavke.ExecSQL;
-
-   Q_KreiraneStavke.close;
-   Q_NoviRacun.Close;
-   sqlString := 'DELETE FROM [dbo].[Racuni] WHERE RacunId = :RacunID AND Status = 1';
-   Q_NoviRacun.SQL.Text := sqlString;
-   Q_NoviRacun.Parameters.ParamByName('RacunID').Value := pRacunID;
-   Q_NoviRacun.ExecSQL;
-   if Q_NoviRacun.RowsAffected > 0 then
-    ShowMessage('Uspešno obrisan')
-   else
-    ShowMessage('Greška: Ne postiji racun ciji je ID ' + IntToStr(pRacunID) + 'i status: Kreiran.');
-
-   Q_NoviRacun.Close;
-
-    pRacunID := 0;
     pArtikalID := 0;
     pNazivArtikla := '';
     pKolicina := 0;
@@ -349,57 +124,243 @@ begin
     pIznosSaPopustom := 0;
     pUkupno:= 0;
     pRacunID :=0;
+end;
+function tform1.KreirajNoviRacun(kupac: string;nacinPlacanja: string):Int64;
+begin
+ Q_KreirajNoviRacun.Close;
+ Q_KreirajNoviRacun.Parameters.ParamByName('Kupac').Value := kupac;
+ Q_KreirajNoviRacun.Parameters.ParamByName('NacinPlacanja').Value := nacinPlacanja;
+ Q_KreirajNoviRacun.ExecSQL;
+ Q_PronadjiKreiranRacun.close;
+ Q_PronadjiKreiranRacun.open;
+    if not Q_PronadjiKreiranRacun.IsEmpty then
+    begin
+    Result := Q_PronadjiKreiranRacun.FieldByName('RacunID').AsInteger;
+    Q_PronadjiKreiranRacun.Close;
+    end
+    else
+    begin
+    Result := 0;
+    Q_PronadjiKreiranRacun.Close;
+    end
+end;
+
+procedure TForm1.PrikaziStavkeZaRacun(RacunID: Integer);
+begin
+  Q_StavkeRacuna.Close;
+  Q_StavkeRacuna.Parameters.ParamByName('RacunID').Value := RacunID;
+  Q_StavkeRacuna.Open;
+end;
+
+procedure TForm1.ZavrsiClick(Sender: TObject);
+begin
+  var sqlString : string;
+  if pRacunID <> 0 then
+   begin
+   Q_ZavrsiKreiranjeRacuna.close;
+   Q_ZavrsiKreiranjeRacuna.Parameters.ParamByName('IDparam').Value := pRacunID;
+   Q_ZavrsiKreiranjeRacuna.ExecSQL;
+   Q_ZavrsiKreiranjeRacuna.Close;
+   Q_PronadjiKreiranRacun.Close;
+   Q_PronadjiKreiranRacun.Open;
+   if Q_PronadjiKreiranRacun.IsEmpty then
+   ShowMessage('Računa je uspešno obrisan')
+   end
+   else
+   begin
+   ResetPrvtVar;
    end;
 end;
 
-procedure TForm1.CheckBox1Click(Sender: TObject);
+procedure TForm1.PretražiClick(Sender: TObject);
+var
+  iznosOd, iznosDo: double;
 begin
-  if CheckBox1.Checked then
+
+  SP_PretragaRacuna.Close;
+  if inNacinPlacanja2.ItemIndex <> -1 then
+    SP_PretragaRacuna.Parameters.ParamByName('@NacinP').Value := inNacinPlacanja2.Items[inNacinPlacanja2.ItemIndex]
+  else
+    SP_PretragaRacuna.Parameters.ParamByName('@NacinP').Value := Null;
+
+  if cbDatum.Checked then
   begin
-    DateTimePicker1.Enabled := CheckBox1.Checked;
-    DateTimePicker2.Enabled := CheckBox1.Checked;
-    Label3.Font.Color := clBlack;       // sivo (bledo)
+    if inDatumOd.Date <> 0 then
+      SP_PretragaRacuna.Parameters.ParamByName('@DatumOd').Value := inDatumOd.Date
+    else
+      SP_PretragaRacuna.Parameters.ParamByName('@DatumOd').Value := Null;
+
+    if inDatumDo.Date <> 0 then
+      SP_PretragaRacuna.Parameters.ParamByName('@DatumDo').Value := inDatumDo.Date
+    else
+      SP_PretragaRacuna.Parameters.ParamByName('@DatumDo').Value := Null;
+  end
+  else
+  begin
+    SP_PretragaRacuna.Parameters.ParamByName('@DatumOd').Value := Null;
+    SP_PretragaRacuna.Parameters.ParamByName('@DatumDo').Value := Null;
+  end;
+
+
+  if inIznosOd.Text <> '' then
+  begin
+    if TryStrToFloat(inIznosOd.Text, iznosOd) then
+      SP_PretragaRacuna.Parameters.ParamByName('@IznosOd').Value := iznosOd
+    else
+    begin
+      ShowMessage(Format('Niste uneli ispravan broj: "%s"', [inIznosOd.Text]));
+      inIznosOd.SetFocus;
+      Exit;
+    end;
+  end
+  else
+    SP_PretragaRacuna.Parameters.ParamByName('@IznosOd').Value := Null;
+
+  if inIznosDo.Text <> '' then
+  begin
+    if TryStrToFloat(inIznosDo.Text, iznosDo) then
+      SP_PretragaRacuna.Parameters.ParamByName('@IznosDo').Value := iznosDo
+    else
+    begin
+      ShowMessage(Format('Niste uneli ispravan broj: "%s"', [inIznosDo.Text]));
+      inIznosDo.SetFocus;
+      Exit;
+    end;
+  end
+  else
+    SP_PretragaRacuna.Parameters.ParamByName('@IznosDo').Value := Null;
+
+  SP_PretragaRacuna.Open;
+
+  if SP_PretragaRacuna.IsEmpty then
+    ShowMessage('Nema podataka za date kriterijume')
+
+end;
+
+
+procedure TForm1.OsveziKorpu;
+begin
+var sqlString: string;
+ Q_KreiraneStavke.close;
+ Q_KreiraneStavke.Parameters.ParamByName('RacunID').Value := pRacunID;
+ Q_KreiraneStavke.Open;
+end;
+
+procedure TForm1.DodajClick(Sender: TObject);
+begin
+var kupac: string;
+var nacinPlacanja: string;
+kupac := inKupac.Text;
+nacinPlacanja := inNacinPlacanja1.Items[inNacinPlacanja1.ItemIndex];
+if pRacunID = 0 then
+begin
+  if (inNacinPlacanja1.ItemIndex <> -1) and (kupac <> '') then
+  pRacunID := KreirajNoviRacun(kupac, nacinPlacanja)
+  else
+  begin
+  ShowMessage('Polja Način plaćanja i Kupac ne mogu biti prazna');
+  ResetPrvtVar;
+  Exit;
+  end;
+end;
+
+if pRacunID <> 0 then
+begin
+  if pKolicina <> 0 then
+  begin
+  Q_DodajStavku.Parameters.ParamByName('RacunID').Value := pRacunID;
+  Q_DodajStavku.Parameters.ParamByName('ArtikalID').Value := pArtikalID;
+  Q_DodajStavku.Parameters.ParamByName('Kolicina').Value := pKolicina;
+  Q_DodajStavku.Parameters.ParamByName('JedinicnaCena').Value := pIznos;
+  Q_DodajStavku.Parameters.ParamByName('PopustProcenat').Value := pPopust;
+  Q_DodajStavku.Parameters.ParamByName('Ukupno').Value := pUkupno;
+  Q_DodajStavku.ExecSQL;
+  ShowMessage('Stavka je uspešno dodata!');
+  OsveziKorpu;
+  Q_SviArtikli.Refresh
+  end
+  else
+  ShowMessage('Količina mora biti veća od nule');
+end
+else
+ShowMessage('Neuspešno kreiranje računa');
+end;
+
+
+procedure TForm1.PonistiClick(Sender: TObject);
+var sqlString : string;
+begin
+  if pRacunID <> 0 then
+   begin
+   Q_ObrisiKreiranRacun.Close;
+   Q_ObrisiKreiranRacun.Parameters.ParamByName('RacunID').Value := pRacunID;
+   Q_ObrisiKreiranRacun.ExecSQL;
+   if Q_ObrisiKreiranRacun.RowsAffected > 0 then
+    ShowMessage('Račun je obrisan.' + IntToStr(pRacunID))
+   else
+    ShowMessage('Greška: Ne postoji račun čiji je ID ' + IntToStr(pRacunID) + 'i status: Kreiran.');
+
+   Q_SviArtikli.Refresh;
+   Q_ObrisiKreiranRacun.Close;
+   ResetPrvtVar;
+   end;
+   OsveziKorpu;
+end;
+
+procedure TForm1.OsveziClick(Sender: TObject);
+begin
+  Q_SviArtikli.Refresh;
+end;
+
+
+procedure TForm1.cbDatumClick(Sender: TObject);
+begin
+  if cbDatum.Checked then
+  begin
+    inDatumOd.Enabled := cbDatum.Checked;
+    inDatumDo.Enabled := cbDatum.Checked;
+    Label3.Font.Color := clBlack;
     Label4.Font.Color := clBlack;
   end
   else
   begin
-     DateTimePicker1.Enabled := False;
-     DateTimePicker2.Enabled := False;
+     inDatumOd.Enabled := False;
+     inDatumDo.Enabled := False;
      Label3.Font.Color := clGray;
      Label4.Font.Color := clGray;
   end;
 end;
 
-procedure TForm1.DBGrid1CellClick(Column: TColumn);
+procedure TForm1.Grid_RacuniCellClick(Column: TColumn);
 var
   SelektovaniID: Integer;
 begin
-  if Q_Racuni_Selectall.IsEmpty then Exit;
-  SelektovaniID := Q_Racuni_SelectAll.FieldByName('RacunID').AsInteger;
+  if SP_PretragaRacuna.IsEmpty then Exit;
+  SelektovaniID := SP_PretragaRacuna.FieldByName('RacunID').AsInteger;
   Label7.Caption := 'Selektovan ID: ' + IntToStr(SelektovaniID);
 PrikaziStavkeZaRacun(SelektovaniID);
 end;
 procedure TForm1.IzracunajStavkeZaRacun();
 begin
-if Q_Artikli_SelectAll.IsEmpty then Exit;
-   pIznos := Q_Artikli_SelectAll.FieldByName('Cena').AsFloat;
-   pPopust :=   Q_Artikli_SelectAll.FieldByName('Popust [%]').AsFloat;
+if Q_SviArtikli.IsEmpty then Exit;
+   pIznos := Q_SviArtikli.FieldByName('Cena').AsFloat;
+   pPopust :=   Q_SviArtikli.FieldByName('Popust [%]').AsFloat;
    pIznosSaPopustom := pIZnos*(1-pPopust/100);
 
-   pKolicina := SpinEdit1.Value;
+   pKolicina := inKolicina.Value;
    pUkupno := pKolicina*pIznosSaPopustom;
 
-   Edit1.Text := FloatToStr(pIznos);
-   Edit3.Text := FloatToStr(pIznosSaPopustom);
-   Edit5.Text := FloatToStr(pUkupno);
+   inIznos.Text := FloatToStr(pIznos);
+   inIznosSaPopustom.Text := FloatToStr(pIznosSaPopustom);
+   inUkupno.Text := FloatToStr(pUkupno);
 end;
 
-procedure TForm1.DBGrid2CellClick(Column: TColumn);
+procedure TForm1.Grid_ArtikliCellClick(Column: TColumn);
 begin
-if Q_Artikli_SelectAll.IsEmpty then Exit;
-   SpinEdit1.MaxValue :=  Q_Artikli_SelectAll.FieldByName('StanjeKolicina').AsInteger;
-   pArtikalID := Q_Artikli_SelectAll.FieldByName('ArtikalID').AsInteger;
-   pNazivArtikla := Q_Artikli_SelectAll.FieldByName('Naziv').AsString;
+if Q_SviArtikli.IsEmpty then Exit;
+   inKolicina.MaxValue :=  Q_SviArtikli.FieldByName('StanjeKolicina').AsInteger;
+   pArtikalID := Q_SviArtikli.FieldByName('ArtikalID').AsInteger;
+   pNazivArtikla := Q_SviArtikli.FieldByName('Naziv').AsString;
    Label9.Caption := pNazivArtikla;
 
    IzracunajStavkeZaRacun();
@@ -409,53 +370,53 @@ procedure TForm1.FormCreate(Sender: TObject);
 
 begin
   ADOConnection1.Connected := True;
-  Width := 1200;
-  Height := 800;
+  WindowState := wsMaximized;
   Position := poScreenCenter;
-  CheckBox1.Checked := False;
-  DateTimePicker1.Enabled := False;
-  DateTimePicker2.Enabled := False;
+  cbDatum.Checked := False;
+  inDatumOd.Enabled := False;
+  inDatumDo.Enabled := False;
   Label3.Font.Color := clGray;
   Label4.Font.Color := clGray;
+  DS_Racuni.DataSet := SP_PretragaRacuna;
 end;
 
-procedure TForm1.Q_Artikli_SelectAllAfterOpen(DataSet: TDataSet);
+procedure TForm1.Q_SviArtikliAfterOpen(DataSet: TDataSet);
 begin
- DBGrid2.Columns[0].Width := 30;
-  DBGrid2.Columns[1].Width := 200;
+ Grid_Artikli.Columns[0].Width := 30;
+  Grid_Artikli.Columns[1].Width := 200;
 
 
 end;
 
 procedure TForm1.Q_KreiraneStavkeAfterOpen(DataSet: TDataSet);
 begin
-  DBGrid4.Columns[0].Width := 250;
-  DBGrid4.Columns[1].Width := 80;
-  DBGrid4.Columns[2].Width := 80;
-  DBGrid4.Columns[3].Width := 80;
-  DBGrid4.Columns[4].Width := 80;
+  Grid_KreiraniRacun.Columns[0].Width := 250;
+  Grid_KreiraniRacun.Columns[1].Width := 80;
+  Grid_KreiraniRacun.Columns[2].Width := 80;
+  Grid_KreiraniRacun.Columns[3].Width := 80;
+  Grid_KreiraniRacun.Columns[4].Width := 80;
 end;
 
-procedure TForm1.Q_Racuni_SelectAllAfterOpen(DataSet: TDataSet);
+procedure TForm1.SP_PretragaRacunaAfterOpen(DataSet: TDataSet);
 var
   i: Integer;
 begin
-DBGrid1.Columns[0].Width := 40;
-  for i := 1 to DBGrid1.Columns.Count - 1 do
-    DBGrid1.Columns[i].Width := 120;
+Grid_Racuni.Columns[0].Width := 40;
+  for i := 1 to Grid_Racuni.Columns.Count - 1 do
+    Grid_Racuni.Columns[i].Width := 120;
 end;
 
-procedure TForm1.Q_Racuni_SelectAllAfterScroll(DataSet: TDataSet);
+procedure TForm1.SP_PretragaRacunaAfterScroll(DataSet: TDataSet);
 var
   RacunID: Integer;
 begin
-  if Q_Racuni_SelectAll.IsEmpty then
+  if SP_PretragaRacuna.IsEmpty then
   begin
     Q_StavkeRacuna.Close;
     exit;
   end;
 
-  RacunID := Q_Racuni_SelectAll.FieldByName('RacunID').AsInteger;
+  RacunID := SP_PretragaRacuna.FieldByName('RacunID').AsInteger;
 
   PrikaziStavkeZaRacun(RacunID);
 end;
@@ -464,15 +425,15 @@ procedure TForm1.Q_StavkeRacunaAfterOpen(DataSet: TDataSet);
 var
   i: Integer;
 begin
-  for i := 0 to DBGrid3.Columns.Count - 1 do
-    if DBGrid3.Columns[i].FieldName = 'SortOrder' then
+  for i := 0 to Grid_StavkeRacuna.Columns.Count - 1 do
+    if Grid_StavkeRacuna.Columns[i].FieldName = 'SortOrder' then
     begin
-      DBGrid3.Columns[i].Visible := False;
+      Grid_StavkeRacuna.Columns[i].Visible := False;
       Break;
     end;
 end;
 
-procedure TForm1.SpinEdit1Change(Sender: TObject);
+procedure TForm1.inKolicinaChange(Sender: TObject);
 begin
      IzracunajStavkeZaRacun();
 end;
