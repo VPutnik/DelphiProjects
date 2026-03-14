@@ -4,7 +4,7 @@ Aplikacija u Delphi-u sa SQL Server bazom.
 
 ## Opis
 Ova aplikacija služi za vođenje evidencije računa u salonu nameštaja. 
-Omogućava kreiranje računa, dodavanje stavki, obračun PDV-a i štampanje i pretragu.
+Omogućava kreiranje računa, dodavanje stavki, obračun PDV-a i pretragu.
 
 ## Funkcionalnosti
 - Kreiranje novih računa
